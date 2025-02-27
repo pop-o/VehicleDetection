@@ -1,0 +1,6 @@
+*.pt
+venv/
+migrations/
+__pycache__/
+*.engine
+*.csv
