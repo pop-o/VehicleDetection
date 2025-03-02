@@ -100,11 +100,11 @@ class DetectionConsumer(AsyncWebsocketConsumer):
         self.mouse_x, self.mouse_y = 0, 0  # Initialize mouse coordinates
         
         # Initialize counter with region points for live video
-        self.region_points = [(0,212), (580, 0)]
+        self.region_points = [(0,212), (500, 46)]
         self.counter = ObjectCounter(
             region=self.region_points,
-            model="yolo11l.pt",
-            classes=[2, 3,5,7],  # vehicle classes
+            model="yolo11m.pt",
+            classes=[2, 3, 5, 7],  # vehicle classes
             show_in=True,
             show_out=True,
             line_width=1,
@@ -136,6 +136,7 @@ class DetectionConsumer(AsyncWebsocketConsumer):
         try:
             # Initialize webcam capture
             self.cap = cv2.VideoCapture(r"C:\Users\HP\Desktop\VehicleDetection\cctv.mp4")  # Use 0 for default webcam
+            # self.cap = cv2.VideoCapture(0)# Use 0 for default webcam
             
             # Set webcam resolution for better performance
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
@@ -148,8 +149,8 @@ class DetectionConsumer(AsyncWebsocketConsumer):
                 return
 
             frame_count = 0
-            cv2.namedWindow("Live Stream")  # Create a window to display video
-            cv2.setMouseCallback("Live Stream", self.mouse_callback)  # Track mouse movement
+            # cv2.namedWindow("Live Stream")  # Create a window to display video
+            # cv2.setMouseCallback("Live Stream", self.mouse_callback)  # Track mouse movement
 
             while self.is_running:
                 ret, frame = self.cap.read()
@@ -166,21 +167,21 @@ class DetectionConsumer(AsyncWebsocketConsumer):
                 # Process frame with counter
                 processed_frame = self.counter.count(frame)
 
-                # Draw mouse position on the frame
-                cv2.putText(
-                    processed_frame,
-                    f"Mouse: ({self.mouse_x}, {self.mouse_y})",
-                    (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2
-                )
+                # # Draw mouse position on the frame
+                # cv2.putText(
+                #     processed_frame,
+                #     f"Mouse: ({self.mouse_x}, {self.mouse_y})",
+                #     (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2
+                # )
 
                 if frame_count %2 == 0:  # Send every 2nd processed frame
                     _, buffer = cv2.imencode('.jpg', processed_frame, [cv2.IMWRITE_JPEG_QUALITY, 70])
                     await self.send(bytes_data=buffer.tobytes())
 
                 # Display video with mouse tracking
-                cv2.imshow("Live Stream", processed_frame)
-                if cv2.waitKey(1) & 0xFF == ord('q'):  # Press 'q' to exit
-                    break
+                # cv2.imshow("Live Stream", processed_frame)
+                # if cv2.waitKey(1) & 0xFF == ord('q'):  # Press 'q' to exit
+                #     break
 
                 # Add a small delay to control frame rate
                 await asyncio.sleep(0.01)
