@@ -167,8 +167,9 @@
 #         return im0
 
 
+#######################################################################
 
-
+# detection/tracker.py
 import os
 import pandas as pd
 from datetime import datetime
@@ -329,7 +330,7 @@ class ObjectCounter(BaseSolution):
             # Count objects
             self.count_objects(current_centroid, track_id, prev_centroid, cls)
 
-            # Draw bounding box and label
+            # Draw bounding box and label (commented out as per your code)
             # vehicle_type = self.get_vehicle_type(cls)
             # if vehicle_type:
             #     color = (0, 255, 0) if vehicle_type == "Four Wheeler" else (0, 0, 255)
